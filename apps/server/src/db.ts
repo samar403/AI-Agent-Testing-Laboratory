@@ -48,8 +48,14 @@ export function openDb(file?: string): DB {
   return db;
 }
 
+const ALPHABET = "0123456789abcdefghijkmnpqrstuvwxyz";
+
+/** Prefixed, URL-safe, alphanumeric ids such as run_k3x9q2m7ab. */
 export function id(prefix: string): string {
-  return `${prefix}_${randomBytes(6).toString("base64url")}`;
+  const bytes = randomBytes(10);
+  let out = "";
+  for (const b of bytes) out += ALPHABET[b % ALPHABET.length];
+  return `${prefix}_${out}`;
 }
 
 export function json<T>(s: unknown): T {

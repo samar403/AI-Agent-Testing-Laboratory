@@ -53,7 +53,7 @@ function HeroPlate() {
           {shown.length}/96 · {shown.length ? Math.round((pass / shown.length) * 100) : 0}% pass
         </span>
       </div>
-      <Microplate scenarios={DEMO_SCENARIOS} trials={12} cells={shown} running={n < order.length} />
+      <Microplate scenarios={DEMO_SCENARIOS} trials={12} cells={shown} running={n < order.length} wellSize={23} />
       <div style={{ marginTop: 12 }}>
         <PlateLegend />
       </div>

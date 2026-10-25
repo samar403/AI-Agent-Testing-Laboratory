@@ -12,7 +12,8 @@ import { estimateTokens } from "../util.ts";
  * Response 200
  *   { content: string,
  *     tool_calls?: [{ id?, name, arguments: object | string }],
- *     usage?: { input_tokens, output_tokens }, model?: string }
+ *     usage?: { input_tokens, output_tokens }, model?: string,
+ *     state?: any }   // opaque; echoed back unchanged on this assistant message in later requests
  *
  * Return tool_calls to have the lab execute them in the sandbox; return only content to reply to the user.
  */
@@ -45,6 +46,7 @@ export class HttpAgent implements AgentAdapter {
         content: m.content,
         ...(m.toolCalls?.length ? { tool_calls: m.toolCalls.map((t) => ({ id: t.id, name: t.name, arguments: t.args })) } : {}),
         ...(m.role === "tool" ? { tool_call_id: m.toolCallId, name: m.toolName, is_error: Boolean(m.isError) } : {}),
+        ...(m.role === "assistant" && m.raw !== undefined ? { state: m.raw } : {}),
       })),
       tools: input.tools,
     };
@@ -62,6 +64,7 @@ export class HttpAgent implements AgentAdapter {
       tool_calls?: WireToolCall[];
       usage?: { input_tokens?: number; output_tokens?: number };
       model?: string;
+      state?: unknown;
     };
     const toolCalls: ToolCall[] = (data.tool_calls ?? []).map((tc) => ({
       id: tc.id ?? `call_${++this.counter}`,
@@ -77,6 +80,7 @@ export class HttpAgent implements AgentAdapter {
         outputTokens: data.usage?.output_tokens ?? estimateTokens(text + JSON.stringify(toolCalls)),
       },
       model: data.model,
+      raw: data.state,
     };
   }
 }

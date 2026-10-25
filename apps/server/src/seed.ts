@@ -32,8 +32,8 @@ export async function seed(store: Store): Promise<void> {
     { suite: supportSuite, version: v2, options: { trials: 12, seed: 21 }, at: now - 6 * DAY },
     { suite: supportSuite, version: v2, options: { trials: 12, seed: 22, chaos: { global: { errorRate: 0.15 } } }, at: now - 5 * DAY },
     { suite: personaSuite, version: v2, options: { trials: 6, seed: 23 }, at: now - 4 * DAY },
-    { suite: supportSuite, version: v3, options: { trials: 12, seed: 42 }, at: now - 1 * DAY },
-    { suite: supportSuite, version: v2, options: { trials: 12, seed: 42 }, at: now - 1 * DAY + 60_000 },
+    { suite: supportSuite, version: v2, options: { trials: 12, seed: 42 }, at: now - 1 * DAY },
+    { suite: supportSuite, version: v3, options: { trials: 12, seed: 42 }, at: now - 1 * DAY + 60_000 },
   ];
 
   for (const h of history) {

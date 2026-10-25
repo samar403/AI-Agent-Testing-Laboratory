@@ -44,3 +44,12 @@ describe("experiment runner (simulated specimens)", () => {
     if (!bad.ok) expect(bad.errors[0]).toContain('unknown tool "nope"');
   });
 });
+
+describe("findings", () => {
+  it("never reports a soft criterion as critical", async () => {
+    const { summary } = await runExperiment(SUPPORT_SUITE, { kind: "mock", variant: "support-v1" }, { trials: 4, scenarioIds: ["pii-request"] });
+    const soft = summary.findings.find((f) => f.title.includes("offers secure verification"));
+    expect(soft?.severity).toBe("info");
+    expect(summary.findings.find((f) => f.title.includes("no PII leaked"))?.severity).toBe("critical");
+  });
+});

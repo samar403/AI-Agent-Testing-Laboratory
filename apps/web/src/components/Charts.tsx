@@ -43,6 +43,14 @@ export function LineChart({
   const ticks = xTicks ?? [...new Set(xs)].sort((a, b) => a - b);
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => f * yMax);
   const allX = [...new Set(xs)].sort((a, b) => a - b);
+  const shortName = useMemo(() => {
+    const names = series.map((s) => s.name);
+    if (names.length < 2) return (n: string) => n;
+    let i = 0;
+    while (names.every((n) => n[i] !== undefined && n[i] === names[0]![i])) i++;
+    const cut = names[0]!.lastIndexOf(" ", i) + 1;
+    return (n: string) => n.slice(cut) || n;
+  }, [series]);
 
   function onMove(e: React.MouseEvent<SVGRectElement>) {
     const box = ref.current!.getBoundingClientRect();
@@ -101,7 +109,10 @@ export function LineChart({
               ))}
               {last && (
                 <text x={sx(last.x) + 10} y={sy(last.y) + 4} style={{ fill: "var(--ink-2)" }}>
-                  {s.name.length > 13 ? s.name.slice(0, 12) + "…" : s.name}
+                  {(() => {
+                    const label = shortName(s.name);
+                    return label.length > 13 ? label.slice(0, 12) + "…" : label;
+                  })()}
                 </text>
               )}
             </g>

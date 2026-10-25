@@ -93,8 +93,9 @@ export function ago(t: number): string {
 
 /** Short specimen code from an id, e.g. run_x7Q2fA → RUN·X7Q2 */
 export function code(id: string): string {
-  const [p, rest = ""] = id.split("_");
-  return `${p!.toUpperCase()}·${rest.slice(0, 4).toUpperCase()}`;
+  const i = id.indexOf("_");
+  const rest = id.slice(i + 1).replace(/[^A-Za-z0-9]/g, "");
+  return `${id.slice(0, i).toUpperCase()}·${rest.slice(0, 4).toUpperCase()}`;
 }
 
 export function riTone(ri: number): "pass" | "warn" | "fail" {

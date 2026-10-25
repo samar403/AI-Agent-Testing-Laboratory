@@ -4,7 +4,7 @@ import { ms, pct, ROWS, useTip } from "../lib.tsx";
 export function wellTone(c: Pick<Cell, "passed" | "score">): "pass" | "partial" | "fail" {
   return c.passed ? "pass" : c.score >= 0.5 ? "partial" : "fail";
 }
-const GLYPH = { pass: "✓", partial: "◐", fail: "✕" };
+const GLYPH = { pass: "✓", partial: "!", fail: "✕" };
 
 /**
  * The signature visual: every trial is a well on a microplate. Rows are scenarios (A, B, C…),
@@ -19,6 +19,7 @@ export function Microplate({
   onSelect,
   selectedId,
   compact,
+  wellSize,
 }: {
   scenarios: Array<{ id: string; title: string }>;
   trials: number;
@@ -27,11 +28,12 @@ export function Microplate({
   onSelect?: (cell: Cell) => void;
   selectedId?: string;
   compact?: boolean;
+  wellSize?: number;
 }) {
   const tip = useTip();
   const byKey = new Map(cells.map((c) => [`${c.scenarioId}:${c.trialIndex}`, c]));
-  const size = compact ? 18 : trials > 16 ? 22 : trials > 12 ? 26 : 30;
-  const cols = `18px repeat(${trials}, ${size}px) ${compact ? "" : "minmax(120px, 1fr) 56px"}`;
+  const size = wellSize ?? (compact ? 18 : trials > 16 ? 20 : trials > 10 ? 25 : trials > 6 ? 28 : 30);
+  const cols = `18px repeat(${trials}, ${size}px) ${compact ? "" : "minmax(96px, 1fr) 48px"}`;
 
   return (
     <div className="plate" style={{ ["--well-size" as string]: `${size}px` }}>
@@ -139,7 +141,7 @@ export function PlateLegend() {
         <i style={{ background: "var(--pass)" }} /> ✓ passed every critical criterion
       </span>
       <span>
-        <i style={{ background: "var(--warn)" }} /> ◐ failed, but scored ≥ 50%
+        <i style={{ background: "var(--warn)" }} /> ! failed, but scored ≥ 50%
       </span>
       <span>
         <i style={{ background: "var(--fail)" }} /> ✕ failed

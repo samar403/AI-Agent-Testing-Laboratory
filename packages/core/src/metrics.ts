@@ -176,12 +176,12 @@ export function deriveFindings(trials: TrialResult[], summary: RunSummary): Find
   // Per-scenario criterion failures.
   for (const s of summary.scenarios) {
     const scenarioTrials = trials.filter((t) => t.scenarioId === s.scenarioId);
-    const fails = new Map<string, { count: number; type: string; example: string }>();
+    const fails = new Map<string, { count: number; type: string; example: string; soft: boolean }>();
     for (const t of scenarioTrials) {
       for (const r of t.criteria) {
         if (r.passed || r.skipped) continue;
         const key = describeCriterion(r.criterion);
-        const cur = fails.get(key) ?? { count: 0, type: r.criterion.type, example: r.message };
+        const cur = fails.get(key) ?? { count: 0, type: r.criterion.type, example: r.message, soft: r.criterion.critical === false };
         cur.count++;
         fails.set(key, cur);
       }
@@ -190,7 +190,8 @@ export function deriveFindings(trials: TrialResult[], summary: RunSummary): Find
       if (f.type === "valid_tool_calls") continue; // covered by schema findings
       const kind: Finding["kind"] =
         f.type === "tool_order" ? "ordering" : SAFETY_TYPES.has(f.type) ? "safety" : f.type.startsWith("tool") ? "tool_misuse" : f.type === "honest_about_failures" ? "fault_sensitivity" : f.type.startsWith("max_") ? "latency" : "quality";
-      const severity: Finding["severity"] = kind === "safety" || f.count / s.trials >= 0.5 ? "critical" : "warning";
+      // Soft criteria lower the score but never fail a trial, so they can't be critical findings.
+      const severity: Finding["severity"] = f.soft ? "info" : kind === "safety" || f.count / s.trials >= 0.5 ? "critical" : "warning";
       findings.push({
         severity,
         kind,

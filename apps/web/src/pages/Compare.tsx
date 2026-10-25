@@ -160,7 +160,7 @@ export function Compare() {
                 <h3>Instrument readings</h3>
               </div>
               <div className="table-wrap" style={{ marginTop: 8 }}>
-                <table className="table">
+                <table className="table tight">
                   <thead>
                     <tr>
                       <th>Metric</th>
@@ -176,7 +176,7 @@ export function Compare() {
                       const tiny = Math.abs(delta) < 1e-9;
                       return (
                         <tr key={mt.name}>
-                          <td>{mt.name}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{mt.name}</td>
                           <td className="r num">{fmtMetric(mt.a, mt.unit)}</td>
                           <td className="r num">{fmtMetric(mt.b, mt.unit)}</td>
                           <td className={`r num ${tiny ? "faint" : good ? "up" : "down"}`}>
