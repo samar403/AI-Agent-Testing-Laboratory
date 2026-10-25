@@ -1,0 +1,15 @@
+{
+  "name": "@agentlab/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AgentLab simulation engine: tool sandbox, chaos injection, user simulation, criteria, metrics.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./browser": "./src/browser.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "zod": "^4.1.12"
+  }
+}

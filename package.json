@@ -1,0 +1,27 @@
+{
+  "name": "agentlab",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AgentLab — the testing laboratory for AI agents. Simulate users, catch bad tool calls, measure reliability, compare versions.",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c cyan,magenta \"npm run dev -w @agentlab/server\" \"npm run dev -w @agentlab/web\"",
+    "build": "npm run build -w @agentlab/web",
+    "start": "npm run start -w @agentlab/server",
+    "test": "vitest run",
+    "typecheck": "tsc -p packages/core && tsc -p apps/server && tsc -p packages/cli && tsc -p apps/web",
+    "lab": "node packages/cli/bin/agentlab.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.5"
+  }
+}

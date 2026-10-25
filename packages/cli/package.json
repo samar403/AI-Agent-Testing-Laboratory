@@ -1,0 +1,17 @@
+{
+  "name": "@agentlab/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Run AgentLab suites locally or in CI. Exits non-zero when reliability gates fail.",
+  "bin": { "agentlab": "./bin/agentlab.mjs" },
+  "dependencies": {
+    "@agentlab/core": "*",
+    "commander": "^15.0.0",
+    "tsx": "^4.23.15",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0"
+  }
+}
