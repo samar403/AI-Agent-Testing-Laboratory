@@ -178,7 +178,7 @@ export function Landing() {
           </div>
           <pre className="codeblock">
             <span className="c"># .github/workflows/agent.yml</span>
-            {"\n"}- run: npx agentlab run suites/support.yaml \{"\n"}
+            {"\n"}- run: agentlab run suites/support.yaml \{"\n"}
             {"    "}--agent <span className="s">https://staging.acme.dev/agent</span> \{"\n"}
             {"    "}--trials <span className="k">8</span> --chaos <span className="k">0.1</span> \{"\n"}
             {"    "}--min-ri <span className="k">85</span> --min-pass-k <span className="k">0.7</span> \{"\n"}

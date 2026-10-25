@@ -9,8 +9,10 @@ import { Store } from "../src/store.ts";
 const store = new Store(openDb(":memory:"));
 const runs = new RunManager(store, 0);
 const app = createApp(store, runs);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type JsonResponse = Omit<Response, "json"> & { json(): Promise<any> };
 const call = (path: string, init?: RequestInit) =>
-  app.request(`/api${path}`, { ...init, headers: { "content-type": "application/json", ...(init?.headers ?? {}) } });
+  app.request(`/api${path}`, { ...init, headers: { "content-type": "application/json", ...(init?.headers ?? {}) } }) as Promise<JsonResponse>;
 
 beforeAll(async () => {
   await seed(store);

@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { hasAnthropicCredentials, runExperiment, type AgentConfig, type RunOptions, type SuiteSpec } from "@agentlab/core";
+import { hasAnthropicCredentials, runExperiment, type AgentConfig, type RunOptions, type SuiteSpec, type TrialResult } from "@agentlab/core";
 import { id } from "./db.ts";
 import type { RunRow, Store } from "./store.ts";
 
@@ -10,6 +10,7 @@ export interface TrialEvent {
   trialIndex: number;
   passed: boolean;
   score: number;
+  metrics: TrialResult["metrics"];
   done: number;
   total: number;
 }
@@ -95,7 +96,7 @@ export class RunManager {
           pacingMs: pace ? this.pacingMs : 0,
           onTrial: (t, done, total) => {
             const trialId = this.store.addTrial(runId, t);
-            this.events.emit(runId, { type: "trial", trialId, scenarioId: t.scenarioId, trialIndex: t.trialIndex, passed: t.passed, score: t.score, done, total } satisfies RunEvent);
+            this.events.emit(runId, { type: "trial", trialId, scenarioId: t.scenarioId, trialIndex: t.trialIndex, passed: t.passed, score: t.score, metrics: t.metrics, done, total } satisfies RunEvent);
           },
         },
       );

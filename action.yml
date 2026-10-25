@@ -1,0 +1,49 @@
+name: AgentLab reliability gate
+description: Run an AgentLab suite against your agent, publish JUnit + a job summary, and fail the job when reliability gates are missed.
+author: samar403
+branding:
+  icon: activity
+  color: purple
+inputs:
+  suite:
+    description: Path to the suite file (.yaml or .json), relative to the workspace.
+    required: true
+  agent:
+    description: "Agent to test: an http(s) endpoint, claude:<model>, sim:<variant> or an agent.json path."
+    required: true
+  trials:
+    description: Trials per scenario.
+    default: "5"
+  args:
+    description: Extra CLI flags, e.g. "--chaos 0.1 --min-ri 85 --min-pass-k 0.7".
+    default: ""
+  junit:
+    description: Where to write the JUnit report.
+    default: agentlab-report.xml
+  upload-url:
+    description: AgentLab server to upload results to (requires AGENTLAB_API_KEY in env).
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    - name: Install AgentLab
+      shell: bash
+      run: cd "${{ github.action_path }}" && npm ci --no-audit --no-fund --loglevel=error
+    - name: Run suite
+      shell: bash
+      env:
+        INPUT_SUITE: ${{ inputs.suite }}
+        INPUT_AGENT: ${{ inputs.agent }}
+        INPUT_TRIALS: ${{ inputs.trials }}
+        INPUT_JUNIT: ${{ inputs.junit }}
+        INPUT_UPLOAD: ${{ inputs['upload-url'] }}
+        INPUT_ARGS: ${{ inputs.args }}
+      run: |
+        UPLOAD=()
+        if [ -n "$INPUT_UPLOAD" ]; then UPLOAD=(--upload "$INPUT_UPLOAD"); fi
+        # shellcheck disable=SC2086
+        node "${{ github.action_path }}/packages/cli/bin/agentlab.mjs" run "$INPUT_SUITE" \
+          --agent "$INPUT_AGENT" --trials "$INPUT_TRIALS" --junit "$INPUT_JUNIT" "${UPLOAD[@]}" $INPUT_ARGS
